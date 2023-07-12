@@ -1,5 +1,0 @@
-kernel/drivers/video/fbdev/exynos/dpu_7885/panels/dpui.ko
-kernel/drivers/video/fbdev/exynos/dpu_7885/panels/mdnie_lite.ko
-kernel/drivers/video/fbdev/exynos/dpu_7885/panels/poc.ko
-kernel/drivers/video/fbdev/exynos/dpu_7885/panels/s6e3fa7_a7y18_lcd_ctrl.ko
-kernel/drivers/video/fbdev/exynos/dpu_7885/panels/dynamic_aid.ko
