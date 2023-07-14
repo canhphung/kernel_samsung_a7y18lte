@@ -16,10 +16,10 @@ jobs:
 
     - name: Install tmate
       run: |
-        sudo sh -c "echo 'deb http://repo.tmate.io ./' > /etc/apt/sources.list.d/tmate.list"
-        wget -qO - http://repo.tmate.io/tmate.asc | sudo apt-key add -
+        sudo apt-get install -y software-properties-common
+        sudo add-apt-repository ppa:tmate.io/archive
         sudo apt-get update
-        sudo apt-get install tmate -y
+        sudo apt-get install -y tmate
 
     - name: Run tmate
       run: tmate
