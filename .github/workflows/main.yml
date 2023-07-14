@@ -62,6 +62,7 @@ jobs:
 
     - name: Unpack, replace kernel, and repack boot image
       run: |
+        cd repack
         magiskboot unpack boot.img
         mv boot.img ../
         rm kernel
