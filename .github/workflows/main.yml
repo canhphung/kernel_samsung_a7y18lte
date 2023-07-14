@@ -49,23 +49,38 @@ jobs:
       run: |
         wget -O magisk.zip https://github.com/topjohnwu/Magisk/releases/download/v26.1/Magisk-v26.1.apk
         unzip magisk.zip lib/x86_64/libmagiskboot.so -d magisk
-        mv magisk/lib/x86_64/libmagiskboot.so magisk/libmagiskboot.so
+        mv magisk/lib/x86_64/libmagiskboot.so /usr/bin/magiskboot
+        chmod +x /usr/bin/magiskboot
 
     - name: Download and extract stock boot image
       run: |
+        mkdir repack
+        cd repack
         wget https://raw.githubusercontent.com/DeadPool-4422/a7y18lte-Resources/main/stock-boot.7z
         7z x stock-boot.7z
+        rm stock-boot.7z
 
     - name: Unpack, replace kernel, and repack boot image
       run: |
-        chmod +x magisk/libmagiskboot.so
-        ./magisk/libmagiskboot.so unpack boot.img
-        mv boot.img ../boot.img.orig
-        cp ./arch/arm64/boot/Image kernel
-        ./magisk/libmagiskboot.so repack ../boot.img.orig boot.img
+        magiskboot unpack boot.img
+        mv boot.img ../
+        rm kernel
+        cp ./arch/arm64/boot/Image ./kernel
+        magiskboot repack ../boot.img boot.img
+        mv boot.img ../
+
+    - name: Zip boot folder
+      run: |
+        zip -r boot.zip ./arch/arm64/boot/
 
     - name: Upload boot image
       uses: actions/upload-artifact@v2
       with:
         name: boot-image
         path: boot.img
+
+    - name: Upload boot folder
+      uses: actions/upload-artifact@v2
+      with:
+        name: boot-folder
+        path: boot.zip
