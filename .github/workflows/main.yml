@@ -1,0 +1,71 @@
+name: Build Kernel and Boot Image
+
+on: 
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    container:
+      image: debian:slim
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run: |
+        apt-get update
+        apt-get install -y \
+            build-essential \
+            kernel-package \
+            fakeroot \
+            libncurses5-dev \
+            libssl-dev \
+            ccache \
+            bison \
+            flex \
+            libelf-dev \
+            bc \
+            wget \
+            zip \
+            p7zip-full
+
+    - name: Setup toolchain
+      run: |
+        mkdir ~/toolchain
+        wget -P ~/toolchain https://releases.linaro.org/components/toolchain/binaries/4.9-2017.01/aarch64-linux-gnu/gcc-linaro-4.9.4-2017.01-x86_64_aarch64-linux-gnu.tar.xz
+        tar -xvf ~/toolchain/gcc-linaro-4.9.4-2017.01-x86_64_aarch64-linux-gnu.tar.xz -C ~/toolchain
+        rm ~/toolchain/gcc-linaro-4.9.4-2017.01-x86_64_aarch64-linux-gnu.tar.xz
+        echo "/root/toolchain/gcc-linaro-4.9.4-2017.01-x86_64_aarch64-linux-gnu/bin" >> $GITHUB_PATH
+
+    - name: Build Kernel
+      run: |
+        chmod +x ./build_kernel.sh
+        ./build_kernel.sh
+
+    - name: Download and extract magiskboot
+      run: |
+        wget -O magisk.zip https://github.com/topjohnwu/Magisk/releases/download/v26.1/Magisk-v26.1.apk
+        unzip magisk.zip lib/x86_64/libmagiskboot.so -d magisk
+        mv magisk/lib/x86_64/libmagiskboot.so magisk/libmagiskboot.so
+
+    - name: Download and extract stock boot image
+      run: |
+        wget https://raw.githubusercontent.com/DeadPool-4422/a7y18lte-Resources/main/stock-boot.7z
+        7z x stock-boot.7z
+
+    - name: Unpack, replace kernel, and repack boot image
+      run: |
+        chmod +x magisk/libmagiskboot.so
+        ./magisk/libmagiskboot.so unpack boot.img
+        mv boot.img boot.img.orig
+        cp ./arch/arm64/boot/Image kernel
+        ./magisk/libmagiskboot.so repack boot.img.orig boot.img
+
+    - name: Upload boot image
+      uses: actions/upload-artifact@v2
+      with:
+        name: boot-image
+        path: boot.img
