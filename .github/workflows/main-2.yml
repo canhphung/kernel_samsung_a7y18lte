@@ -12,14 +12,10 @@ jobs:
       run: sudo apt-get update
 
     - name: Install Dependencies
-      run: sudo apt-get install -y git wget software-properties-common
+      run: sudo apt-get install -y git wget
 
     - name: Install tmate
-      run: |
-        sudo apt-get install -y software-properties-common
-        sudo add-apt-repository ppa:tmate.io/archive
-        sudo apt-get update
-        sudo apt-get install -y tmate
+      run: sudo apt-get install -y tmate
 
     - name: Run tmate
       run: tmate
