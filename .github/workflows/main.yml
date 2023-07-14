@@ -60,9 +60,9 @@ jobs:
       run: |
         chmod +x magisk/libmagiskboot.so
         ./magisk/libmagiskboot.so unpack boot.img
-        mv boot.img boot.img.orig
+        mv boot.img ../boot.img.orig
         cp ./arch/arm64/boot/Image kernel
-        ./magisk/libmagiskboot.so repack boot.img.orig boot.img
+        ./magisk/libmagiskboot.so repack ../boot.img.orig boot.img
 
     - name: Upload boot image
       uses: actions/upload-artifact@v2
