@@ -1,0 +1,12 @@
+name: Debug workflow for boot image builder
+
+on:
+  workflow_dispatch:
+
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Setting up tmate session
+      uses: mxschmitt/action-tmate@v3
