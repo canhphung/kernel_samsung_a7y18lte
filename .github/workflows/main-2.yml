@@ -8,5 +8,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Setting up tmate session
-      uses: mxschmitt/action-tmate@v3
+      - name: Debugging with tmate
+        uses: mxschmitt/action-tmate@v3.16
+
