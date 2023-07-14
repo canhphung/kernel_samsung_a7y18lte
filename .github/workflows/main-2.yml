@@ -1,9 +1,25 @@
-name: CI
-on: [push]
+name: Debug Workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      debug_enabled:
+        type: boolean
+        description: 'Enable tmate debugging'
+        required: false
+        default: false
+
 jobs:
-  build:
+  debug:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - name: Setup tmate session
-      uses: mxschmitt/action-tmate@v3
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up tmate session
+        uses: mxschmitt/action-tmate@v3
+        if: github.event.inputs.debug_enabled == 'true'
+        
+      - name: Your normal steps
+        run: echo "Place your commands here"
+
