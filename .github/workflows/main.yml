@@ -66,9 +66,8 @@ jobs:
         magiskboot unpack boot.img
         mv boot.img ../
         rm kernel
-        cp ./arch/arm64/boot/Image ./kernel
+        cp ../arch/arm64/boot/Image ./kernel
         magiskboot repack ../boot.img boot.img
-        mv boot.img ../
 
     - name: Zip boot folder
       run: |
