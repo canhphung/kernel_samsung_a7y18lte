@@ -19,7 +19,6 @@ jobs:
         apt-get update
         apt-get install -y \
             build-essential \
-            kernel-package \
             fakeroot \
             libncurses5-dev \
             libssl-dev \
@@ -30,7 +29,8 @@ jobs:
             bc \
             wget \
             zip \
-            p7zip-full
+            p7zip-full \
+            unzip
 
     - name: Setup toolchain
       run: |
