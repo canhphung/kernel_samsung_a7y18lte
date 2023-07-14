@@ -73,14 +73,46 @@ jobs:
       run: |
         zip -r boot.zip ./arch/arm64/boot/
 
-    - name: Upload boot image
-      uses: actions/upload-artifact@v2
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
       with:
-        name: boot-image
-        path: repack/boot.img
+        tag_name: ${{ github.run_id }}
+        release_name: Release ${{ github.run_id }}
+        draft: false
+        prerelease: false
 
-    - name: Upload boot folder
-      uses: actions/upload-artifact@v2
+    - name: Upload Release Asset - boot image
+      id: upload-release-asset-img
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        name: boot-folder
-        path: boot.zip
+        upload_url: ${{ steps.create_release.outputs.upload_url }} 
+        asset_path: ./repack/boot.img
+        asset_name: boot.img
+        asset_content_type: application/octet-stream
+
+    - name: Upload Release Asset - boot folder
+      id: upload-release-asset-zip
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} 
+        asset_path: ./boot.zip
+        asset_name: boot.zip
+        asset_content_type: application/zip
+
+    - name: Upload Release Asset - compiled kernel
+      id: upload-release-asset-kernel
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} 
+        asset_path: ./arch/arm64/boot/Image
+        asset_name: compiled_kernel
+        asset_content_type: application/octet-stream
