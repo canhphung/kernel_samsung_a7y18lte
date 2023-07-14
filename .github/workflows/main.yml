@@ -78,7 +78,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: boot-image
-        path: boot.img
+        path: repack/boot.img
 
     - name: Upload boot folder
       uses: actions/upload-artifact@v2
