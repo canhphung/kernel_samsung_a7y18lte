@@ -1,7 +1,7 @@
 name: Build Kernel and Boot Image
 
 env:
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  GITHUB_TOKEN: ${{ secrets.KERNEL_UPLOAD_TOKEN }}
 
 on: 
   workflow_dispatch:
