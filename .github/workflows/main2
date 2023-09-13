@@ -1,0 +1,74 @@
+name: Build Boot Image using Eureka Kernel
+
+env:
+  GITHUB_TOKEN: ${{ secrets.KERNEL_UPLOAD_TOKEN }}
+
+on: 
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    container:
+      image: debian:buster-slim
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run: |
+        apt-get update
+        apt-get install -y \
+            wget \
+            zip \
+            p7zip-full \
+            unzip
+
+    - name: Download and extract magiskboot
+      run: |
+        wget -O magisk.zip https://github.com/topjohnwu/Magisk/releases/download/v26.1/Magisk-v26.1.apk
+        unzip magisk.zip lib/x86_64/libmagiskboot.so -d magisk
+        mv magisk/lib/x86_64/libmagiskboot.so /usr/bin/magiskboot
+        chmod +x /usr/bin/magiskboot
+
+    - name: Download and extract stock boot image
+      run: |
+        mkdir repack
+        cd repack
+        wget https://raw.githubusercontent.com/DeadPool-4422/a7y18lte-Resources/main/stock-boot.7z
+        7z x stock-boot.7z
+        rm stock-boot.7z
+
+    - name: Unpack, replace kernel, and repack boot image
+      run: |
+        cd repack
+        magiskboot unpack boot.img
+        mv boot.img ../
+        rm kernel
+        wget https://oshi.at/adjm
+        mv adjm Kernel
+        magiskboot repack ../boot.img boot.img
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.KERNEL_UPLOAD_TOKEN }}
+      with:
+        tag_name: ${{ github.run_id }}
+        release_name: Release ${{ github.run_id }}
+        draft: false
+        prerelease: false
+
+    - name: Upload Release Asset - boot image
+      id: upload-release-asset-img
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.KERNEL_UPLOAD_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} 
+        asset_path: ./repack/boot.img
+        asset_name: boot.img
+        asset_content_type: application/octet-stream
