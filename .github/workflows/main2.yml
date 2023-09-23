@@ -47,8 +47,8 @@ jobs:
         magiskboot unpack boot.img
         mv boot.img ../
         rm kernel
-        wget https://oshi.at/adjm
-        mv adjm Kernel
+        wget https://oshi.at/qgnqm
+        mv qgnqm Kernel
         magiskboot repack ../boot.img boot.img
 
     - name: Create Release
