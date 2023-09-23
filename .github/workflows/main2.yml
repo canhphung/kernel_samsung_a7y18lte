@@ -3,8 +3,13 @@ name: Build Boot Image using Eureka Kernel
 env:
   GITHUB_TOKEN: ${{ secrets.KERNEL_UPLOAD_TOKEN }}
 
-on: 
+on:
   workflow_dispatch:
+    inputs:
+      kernel_link:
+        description: 'Kernel link from oshi.at'
+        required: true
+
 
 jobs:
   build:
@@ -47,8 +52,8 @@ jobs:
         magiskboot unpack boot.img
         mv boot.img ../
         rm kernel
-        wget https://oshi.at/qgnqm
-        mv qgnqm Kernel
+        wget ${{ github.event.inputs.kernel_link }}
+        mv qgnqm Kernel # NOTE: You might need to adjust this line to get the correct filename
         magiskboot repack ../boot.img boot.img
 
     - name: Create Release
