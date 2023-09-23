@@ -52,8 +52,7 @@ jobs:
         magiskboot unpack boot.img
         mv boot.img ../
         rm kernel
-        wget ${{ github.event.inputs.kernel_link }}
-        mv qgnqm Kernel # NOTE: You might need to adjust this line to get the correct filename
+        wget -O boot.img ${{ github.event.inputs.kernel_link }}
         magiskboot repack ../boot.img boot.img
 
     - name: Create Release
